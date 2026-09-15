@@ -1,0 +1,15 @@
+---
+import { leadership } from "../data/resume";
+---
+
+<section aria-labelledby="lead-heading" class="wrap border-t border-line py-16 sm:py-24">
+  <div class="lg:ml-[33.333%]">
+    <h2 id="lead-heading" class="text-sm font-medium text-muted">How I lead</h2>
+    <p data-reveal class="display mt-5 max-w-[26ch] text-[clamp(1.625rem,3.1vw,2.75rem)] leading-[1.12] font-medium">
+      {leadership.statement}
+    </p>
+    <ul class="mt-8 flex flex-wrap gap-x-8 gap-y-2 text-muted">
+      {leadership.practices.map((p) => <li>{p}</li>)}
+    </ul>
+  </div>
+</section>

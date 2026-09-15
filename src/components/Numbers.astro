@@ -1,0 +1,76 @@
+---
+import { stats } from "../data/resume";
+
+const tone = { accent: "tile-accent", ink: "tile-ink", raised: "tile-raised", plain: "tile-plain" } as const;
+---
+
+<section aria-labelledby="impact-heading" class="wrap pb-8 sm:pb-12">
+  <h2 id="impact-heading" class="sr-only">Impact</h2>
+  <ul class="grid gap-3 md:grid-cols-6 md:gap-4">
+    {
+      stats.map((stat, i) => (
+        <li
+          data-reveal
+          style={`--d:${i * 70}ms`}
+          class:list={["tile", tone[stat.tone], i < 2 ? "md:col-span-3" : "md:col-span-2"]}
+        >
+          <p class="display text-[clamp(2.75rem,5vw,4.5rem)] tabular-nums">
+            {stat.count ? (
+              <span
+                data-count-end={stat.count.end}
+                data-count-prefix={stat.count.prefix ?? ""}
+                data-count-suffix={stat.count.suffix ?? ""}
+                data-count-decimals={stat.count.decimals ?? 0}
+              >
+                {stat.value}
+              </span>
+            ) : (
+              stat.value
+            )}
+          </p>
+          <div>
+            <p class="max-w-[32ch] text-[15px] leading-snug sm:text-base">{stat.label}</p>
+            <p class="tile-source mt-3 text-sm">{stat.source}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<script>
+  // Count up from zero the first time a number scrolls into view. The final value is
+  // already in the HTML, so nothing depends on this running.
+  const nodes = Array.from(document.querySelectorAll<HTMLElement>("[data-count-end]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reduce && nodes.length > 0 && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          io.unobserve(entry.target);
+          const el = entry.target as HTMLElement;
+          const end = Number(el.dataset.countEnd);
+          const prefix = el.dataset.countPrefix ?? "";
+          const suffix = el.dataset.countSuffix ?? "";
+          const decimals = Number(el.dataset.countDecimals ?? 0);
+          const duration = 1400;
+          const format = (v: number) => `${prefix}${v.toFixed(decimals)}${suffix}`;
+          const t0 = performance.now();
+          const tick = (now: number) => {
+            const p = Math.min(1, (now - t0) / duration);
+            const eased = 1 - Math.pow(1 - p, 4);
+            el.textContent = format(end * eased);
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = format(end);
+          };
+          el.textContent = format(0);
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.5 },
+    );
+    nodes.forEach((el) => io.observe(el));
+  }
+</script>
