@@ -1,0 +1,71 @@
+---
+import "../styles/global.css";
+import fontUrl from "../fonts/bricolage-grotesque-latin.woff2?url";
+import { person } from "../data/resume";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = person.name, description = person.description } = Astro.props;
+const site = Astro.site ?? new URL("http://localhost:4321");
+const canonical = new URL("/", site).href;
+const ogImage = new URL("/og.png", site).href;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: person.name,
+  email: `mailto:${person.email}`,
+  jobTitle: "Interim CTO",
+  worksFor: { "@type": "Organization", name: "CleanCart Technologies" },
+  alumniOf: { "@type": "CollegeOrUniversity", name: "James Madison University" },
+  address: { "@type": "PostalAddress", addressLocality: "Asheville", addressRegion: "NC", addressCountry: "US" },
+  sameAs: [person.linkedin],
+  url: canonical,
+};
+
+// Runs before first paint: applies a saved theme choice and marks that JS is on,
+// which is what enables the scroll-reveal styles (no JS, nothing is ever hidden).
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark"){document.documentElement.dataset.theme=t}}catch(e){}document.documentElement.classList.add("js")})();`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f7f7" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0e1012" />
+    <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={person.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${person.name}: ${person.headline}`} />
+    <meta property="profile:first_name" content="Tommy" />
+    <meta property="profile:last_name" content="Eastman" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline set:html={themeScript} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, "\\u003c")} />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <slot />
+  </body>
+</html>

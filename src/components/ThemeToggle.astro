@@ -1,0 +1,38 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button type="button" class="iconbtn" data-theme-toggle aria-label="Toggle dark mode">
+  <Icon name="ph:moon" size={18} class="when-light" aria-hidden="true" />
+  <Icon name="ph:sun" size={18} class="when-dark" aria-hidden="true" />
+</button>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+  const root = document.documentElement;
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+  const resolved = () => {
+    const chosen = root.dataset.theme;
+    if (chosen === "light" || chosen === "dark") return chosen;
+    return media.matches ? "dark" : "light";
+  };
+  const label = () => {
+    const next = resolved() === "dark" ? "light" : "dark";
+    button?.setAttribute("aria-label", `Switch to ${next} mode`);
+    button?.setAttribute("title", `Switch to ${next} mode`);
+  };
+
+  button?.addEventListener("click", () => {
+    const next = resolved() === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      // Storage can be unavailable (private mode); the choice still applies for this visit.
+    }
+    label();
+  });
+  media.addEventListener("change", label);
+  label();
+</script>

@@ -1,0 +1,49 @@
+---
+import Base from "../layouts/Base.astro";
+import Contact from "../components/Contact.astro";
+import Education from "../components/Education.astro";
+import Experience from "../components/Experience.astro";
+import Hero from "../components/Hero.astro";
+import Leadership from "../components/Leadership.astro";
+import Numbers from "../components/Numbers.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteNav from "../components/SiteNav.astro";
+import Skills from "../components/Skills.astro";
+---
+
+<Base>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <SiteNav />
+  <main id="main">
+    <Hero />
+    <Numbers />
+    <Experience />
+    <Skills />
+    <Leadership />
+    <Education />
+    <Contact />
+  </main>
+  <SiteFooter />
+</Base>
+
+<script>
+  // Scroll reveal: flip .is-in on every [data-reveal] element as it enters the viewport.
+  const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce || !("IntersectionObserver" in window)) {
+    els.forEach((el) => el.classList.add("is-in"));
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-in");
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
+    );
+    els.forEach((el) => io.observe(el));
+  }
+</script>

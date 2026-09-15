@@ -1,0 +1,25 @@
+---
+import { skillGroups } from "../data/resume";
+---
+
+<section id="skills" aria-labelledby="skills-heading" class="wrap border-t border-line py-16 sm:py-24">
+  <h2 id="skills-heading" class="display text-[clamp(2rem,3.5vw,3rem)]">Skills</h2>
+  <dl class="mt-10 grid gap-x-12 gap-y-9 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
+    {
+      skillGroups.map((group, i) => (
+        <div data-reveal style={`--d:${i * 50}ms`}>
+          <dt class="text-sm font-medium text-muted">{group.name}</dt>
+          {group.multiline ? (
+            <dd class="mt-2 space-y-1.5 text-lg leading-relaxed">
+              {group.items.map((item) => (
+                <p>{item}</p>
+              ))}
+            </dd>
+          ) : (
+            <dd class="mt-2 text-lg leading-relaxed">{group.items.join(", ")}</dd>
+          )}
+        </div>
+      ))
+    }
+  </dl>
+</section>

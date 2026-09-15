@@ -1,0 +1,26 @@
+---
+import { Icon } from "astro-icon/components";
+import { person } from "../data/resume";
+---
+
+<section id="contact" aria-labelledby="contact-heading" class="wrap border-t border-line py-20 sm:py-32">
+  <h2 id="contact-heading" class="text-sm font-medium text-muted">Contact</h2>
+  <a
+    data-reveal
+    href={`mailto:${person.email}`}
+    class="display mt-5 block break-all text-[clamp(1.75rem,5.4vw,4.75rem)] transition-colors duration-300 ease-out-expo hover:text-accent sm:break-normal"
+  >
+    {person.email}
+  </a>
+  <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-muted">
+    <a class="link" href={person.linkedin} target="_blank" rel="noreferrer">
+      LinkedIn
+      <Icon name="ph:arrow-up-right-bold" size={14} aria-hidden="true" />
+    </a>
+    <a class="link" href={person.resumePath} target="_blank" rel="noreferrer">
+      Resume
+      <Icon name="ph:arrow-up-right-bold" size={14} aria-hidden="true" />
+    </a>
+    <p>Based in {person.location}, working remotely.</p>
+  </div>
+</section>

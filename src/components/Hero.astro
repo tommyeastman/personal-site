@@ -1,0 +1,59 @@
+---
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import { person } from "../data/resume";
+
+// Drop a photo at src/assets/portrait.{jpg,png,webp} and the hero becomes a split layout.
+const portraits = import.meta.glob<{ default: ImageMetadata }>("../assets/portrait.{jpg,jpeg,png,webp}", {
+  eager: true,
+});
+const portrait = Object.values(portraits)[0]?.default;
+const words = person.headline.split(" ");
+---
+
+<section id="top" aria-labelledby="hero-heading" class="wrap pt-10 pb-16 sm:pt-16 sm:pb-24 lg:pt-20">
+  <div class:list={[portrait && "grid gap-12 lg:grid-cols-12 lg:items-end"]}>
+    <div class:list={[portrait && "lg:col-span-8"]}>
+      <h1 id="hero-heading" class="display text-[clamp(2.5rem,5.6vw,4.75rem)]">
+        {
+          words.map((word, i) => (
+            <>
+              <span class="hero-word" style={`--i:${i}`}>
+                <span>{word}</span>
+              </span>{" "}
+            </>
+          ))
+        }
+      </h1>
+      <p class="hero-fade mt-7 max-w-[50ch] text-lg leading-relaxed text-muted sm:text-xl" style="--i:0">
+        {person.intro}
+      </p>
+      <div class="hero-fade mt-9 flex flex-wrap gap-3" style="--i:1">
+        <a class="btn btn-primary" href={`mailto:${person.email}`}>
+          Email me
+          <Icon name="ph:arrow-up-right-bold" size={18} class="icon" aria-hidden="true" />
+        </a>
+        <a class="btn btn-secondary" href={person.resumePath} target="_blank" rel="noreferrer">
+          Resume
+          <Icon name="ph:file-arrow-down" size={18} class="icon" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+
+    {
+      portrait && (
+        <div class="hero-fade relative aspect-[4/5] overflow-hidden rounded-tile lg:col-span-4" style="--i:0">
+          <Image
+            src={portrait}
+            alt={`Portrait of ${person.name}`}
+            widths={[480, 800, 1200]}
+            sizes="(min-width: 1024px) 30vw, 100vw"
+            loading="eager"
+            fetchpriority="high"
+            class="h-full w-full object-cover"
+          />
+        </div>
+      )
+    }
+  </div>
+</section>
